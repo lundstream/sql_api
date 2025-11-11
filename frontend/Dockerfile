@@ -2,14 +2,14 @@ FROM node:20-bullseye-slim
 
 WORKDIR /app
 
-# Kopiera package.json + package-lock.json från frontend-mappen
-COPY frontend/package*.json ./
+# Kopiera package.json + package-lock.json
+COPY package*.json ./
 
 # Installera alla dependencies inklusive devDependencies
 RUN npm install
 
 # Kopiera resten av frontend-koden
-COPY frontend/ ./
+COPY . .
 
 # Bygg frontend
 RUN npm run build
