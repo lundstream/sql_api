@@ -13,9 +13,9 @@ COPY package*.json ./
 RUN npm install
 
 # Kopiera resten av frontend-koden
-COPY . .
+COPY . ./
 
-# Bygg frontend
+# Bygg frontend (Vite kommer använda VITE_API)
 RUN npm run build
 
 # Installera serve för att serva dist/
