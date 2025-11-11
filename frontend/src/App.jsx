@@ -8,7 +8,7 @@ function App() {
   const [tables, setTables] = useState([]);
   const [data, setData] = useState([]);
   const [selectedTable, setSelectedTable] = useState("");
-  const apiBase = process.env.REACT_APP_API;
+  const apiBase = import.meta.env.VITE_API;
 
   const connect = async () => {
     const res = await fetch(`${apiBase}/connect`, {
