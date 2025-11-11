@@ -8,7 +8,7 @@ function App() {
   const [tables, setTables] = useState([]);
   const [data, setData] = useState([]);
   const [selectedTable, setSelectedTable] = useState("");
-  const apiBase = "http://localhost:8011";
+  const apiBase = "http://192.168.1.20:8011";
 
   const connect = async () => {
     const res = await fetch(`${apiBase}/connect`, {
