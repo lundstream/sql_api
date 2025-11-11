@@ -2,11 +2,13 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Kopiera package.json först och installera dependencies
+# Kopiera package.json och package-lock.json
 COPY package*.json ./
+
+# Installera dependencies inklusive @vitejs/plugin-react
 RUN npm install
 
-# Kopiera resten av frontend-koden (inkl. src och public)
+# Kopiera resterande frontend-kod
 COPY . .
 
 ENV NODE_ENV=production
