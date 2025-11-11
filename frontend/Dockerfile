@@ -5,15 +5,18 @@ WORKDIR /app
 # Kopiera package.json och package-lock.json
 COPY package*.json ./
 
-# Installera dependencies inklusive @vitejs/plugin-react
+# Installera dependencies inklusive devDependencies (plugin-react)
 RUN npm install
 
-# Kopiera resterande frontend-kod
+# Kopiera resten av frontend-koden inklusive vite.config.js
 COPY . .
 
 ENV NODE_ENV=production
+
+# Bygg frontend
 RUN npm run build
 
+# Installera serve för att serva dist/
 RUN npm install -g serve
 
 EXPOSE 8012
