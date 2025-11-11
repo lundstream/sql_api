@@ -12,14 +12,14 @@ RUN apt-get update && \
 WORKDIR /app
 
 # Kopiera och installera Python-dependencies
-COPY backend/requirements.txt ./
+COPY requirements.txt ./
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Kopiera backend-koden
-COPY backend ./backend
+COPY . .
 
 EXPOSE 8011
 
 # Starta backend via uvicorn
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8011"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8011"]
