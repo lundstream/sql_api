@@ -17,8 +17,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory="frontend/dist"), name="static")
-
 class MSSQLConfig(BaseModel):
     server: str
     database: str
