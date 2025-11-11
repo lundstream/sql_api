@@ -2,10 +2,14 @@ FROM node:20-bullseye-slim
 
 WORKDIR /app
 
+# Build-arg för API URL
+ARG VITE_API
+ENV VITE_API=${VITE_API}
+
 # Kopiera package.json + package-lock.json
 COPY package*.json ./
 
-# Installera alla dependencies inklusive devDependencies
+# Installera dependencies
 RUN npm install
 
 # Kopiera resten av frontend-koden
