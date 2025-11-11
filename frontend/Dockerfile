@@ -2,11 +2,12 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY frontend/package*.json ./
+# Kopiera package.json först och installera dependencies
+COPY package*.json ./
 RUN npm install
 
-COPY frontend/public/ ./public/
-COPY frontend/src/ ./src/
+# Kopiera resten av frontend-koden (inkl. src och public)
+COPY . .
 
 ENV NODE_ENV=production
 RUN npm run build
