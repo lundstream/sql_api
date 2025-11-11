@@ -17,6 +17,10 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_API: http://backend:8011
+    environment:
+      - VITE_API=http://backend:8011
     container_name: db_frontend
     ports:
       - "8012:8012"
