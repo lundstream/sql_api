@@ -8,7 +8,7 @@ function App() {
   const [tables, setTables] = useState([]);
   const [data, setData] = useState([]);
   const [selectedTable, setSelectedTable] = useState("");
-  const apiBase = import.meta.env.VITE_API;
+  const apiBase = import.meta.env.VITE_API; // dynamisk via build-arg
 
   const connect = async () => {
     const res = await fetch(`${apiBase}/connect`, {
@@ -17,12 +17,15 @@ function App() {
       body: JSON.stringify({ server, database, username, password }),
     });
     const json = await res.json();
-    if (json.tables) {
+    if (json.status === "connected") {
       setTables(json.tables);
       setData([]);
       setSelectedTable("");
     } else {
-      alert("Kunde inte ansluta: " + JSON.stringify(json));
+      alert("Kunde inte ansluta: " + json.detail);
+      setTables([]);
+      setData([]);
+      setSelectedTable("");
     }
   };
 
@@ -38,14 +41,31 @@ function App() {
       <h2>MSSQL REST API Viewer</h2>
 
       <div style={{ marginBottom: 10 }}>
-        <input placeholder="Server (t.ex. 192.168.1.50\SQLEXPRESS)"
-          value={server} onChange={(e) => setServer(e.target.value)} style={{ width: 400 }} /><br/>
-        <input placeholder="Databas" value={database}
-          onChange={(e) => setDatabase(e.target.value)} style={{ width: 400, marginTop: 5 }} /><br/>
-        <input placeholder="Användare" value={username}
-          onChange={(e) => setUsername(e.target.value)} style={{ width: 400, marginTop: 5 }} /><br/>
-        <input placeholder="Lösenord" type="password" value={password}
-          onChange={(e) => setPassword(e.target.value)} style={{ width: 400, marginTop: 5 }} /><br/>
+        <input
+          placeholder="Server (t.ex. 192.168.1.50\\SQLEXPRESS)"
+          value={server}
+          onChange={(e) => setServer(e.target.value)}
+          style={{ width: 400 }}
+        /><br/>
+        <input
+          placeholder="Databas"
+          value={database}
+          onChange={(e) => setDatabase(e.target.value)}
+          style={{ width: 400, marginTop: 5 }}
+        /><br/>
+        <input
+          placeholder="Användare"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          style={{ width: 400, marginTop: 5 }}
+        /><br/>
+        <input
+          placeholder="Lösenord"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ width: 400, marginTop: 5 }}
+        /><br/>
         <button onClick={connect} style={{ marginTop: 10 }}>Anslut</button>
       </div>
 
