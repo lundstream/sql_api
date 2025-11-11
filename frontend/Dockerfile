@@ -2,14 +2,21 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# Kopiera package.json och package-lock.json först
 COPY package*.json ./
+
+# Installera dependencies
 RUN npm install
 
-COPY src/ ./src/
+# Kopiera resten av koden
 COPY public/ ./public/
+COPY src/ ./src/
 
+# Bygg frontend
+ENV NODE_ENV=production
 RUN npm run build
 
+# Serve byggda filer
 RUN npm install -g serve
 
 EXPOSE 8012
