@@ -2,16 +2,14 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Kopiera package.json och package-lock.json
+# Kopiera package.json + package-lock.json
 COPY package*.json ./
 
-# Installera dependencies inklusive devDependencies (plugin-react)
+# Installera ALLA dependencies (inkl. devDependencies)
 RUN npm install
 
-# Kopiera resten av frontend-koden inklusive vite.config.js
+# Kopiera resten av koden inklusive vite.config.js
 COPY . .
-
-ENV NODE_ENV=production
 
 # Bygg frontend
 RUN npm run build
