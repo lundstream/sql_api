@@ -1,16 +1,13 @@
-version: "3.9"
-
 services:
   backend:
     build: ./backend
     ports:
       - "8011:8011"
-    restart: unless-stopped
-
   frontend:
     build: ./frontend
-    depends_on:
-      - backend
     ports:
       - "8012:8012"
-    restart: unless-stopped
+    environment:
+      - REACT_APP_API=http://backend:8011
+    depends_on:
+      - backend
