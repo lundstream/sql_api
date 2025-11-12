@@ -165,9 +165,9 @@ Kommunikation: JSON via HTTP	API mellan frontend och backend
 Systemet är helt dynamiskt: det kräver inga fördefinierade databasanslutningar i koden – användaren matar in uppgifterna i gränssnittet och backend ansluter live.
 
 ## 6. Vidare utveckling
-Lägg till CRUD-stöd (INSERT, UPDATE, DELETE)
-Autentisering via JWT-token
-Serverlista / favoriter i frontend
-Exportera data till CSV/Excel
-Loggning med uvicorn + rotating file handler
+- Lägg till CRUD-stöd (INSERT, UPDATE, DELETE)
+- Autentisering via JWT-token
+- Serverlista / favoriter i frontend
+- Exportera data till CSV/Excel
+- Loggning med uvicorn + rotating file handler
 
