@@ -42,7 +42,7 @@ Products
 Users
 
 Exempel på SQL för att skapa tabeller:
-
+```
 CREATE TABLE Products (
     Id INT PRIMARY KEY IDENTITY,
     Name NVARCHAR(50),
@@ -60,7 +60,7 @@ CREATE TABLE Users (
 
 INSERT INTO Users (Username, Email)
 VALUES ('admin', 'admin@test.com'), ('user1', 'user1@test.com');
-
+```
 ## 2. FastAPI-backend
 Syfte
 Tillhandahåller ett REST API som frontend eller externa klienter (t.ex. PowerShell) kan anropa för att:
@@ -79,6 +79,7 @@ Viktiga endpoints
 
 POST /connect
 Input:
+```
 {
   "server": "192.168.1.20,1433",
   "database": "TestDB",
@@ -90,9 +91,10 @@ Respons:
   "status": "connected",
   "tables": ["Products", "Users"]
 }
-
+```
 POST /tables/{table_name}
 Input:
+```
 {
   "server": "192.168.1.20,1433",
   "database": "TestDB",
@@ -104,9 +106,11 @@ Respons:
   {"Id": 1, "Name": "Keyboard", "Price": 299.00},
   {"Id": 2, "Name": "Mouse", "Price": 199.00}
 ]
+```
 
 Exempel på PowerShell-anrop
 ### Anslut till server
+```
 $body = @{
     server = "192.168.1.20,1433"
     database = "TestDB"
@@ -115,9 +119,12 @@ $body = @{
 } | ConvertTo-Json
 
 Invoke-RestMethod -Uri "http://192.168.1.20:8011/connect" -Method POST -Body $body -ContentType "application/json"
+```
 
 ### Hämta tabell
+```
 Invoke-RestMethod -Uri "http://192.168.1.20:8011/tables/Products" -Method POST -Body $body -ContentType "application/json"
+```
 ## 3. React-frontend (Vite)
 Syfte
 Ger ett enkelt gränssnitt för att ange anslutningsuppgifter, lista tabeller och visa data.
@@ -143,10 +150,13 @@ Data returneras som JSON och visas i tabellformat
 
 ## 4. Körning
 Backend
+```
 uvicorn main:app --host 0.0.0.0 --port 8011
-
+```
 Frontend
+```
 npm run dev
+```
 
 URL:er
 Backend API: http://192.168.1.20:8011
