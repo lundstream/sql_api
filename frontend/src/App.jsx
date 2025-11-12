@@ -9,51 +9,39 @@ function App() {
   const [data, setData] = useState([]);
   const [selectedTable, setSelectedTable] = useState("");
 
-  const apiBase = "http://192.168.1.20:8011"; // direktåtkomst till backend
+  const apiBase = "http://192.168.1.20:8011"; // backend-adress
 
+  // Anslut till SQL Server
   const connect = async () => {
-    try {
-      const res = await fetch(`${apiBase}/connect`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ server, database, username, password }),
-      });
-      const json = await res.json();
-      if (json.status === "connected") {
-        setTables(json.tables || []);
-        setData([]);
-        setSelectedTable("");
-      } else {
-        alert("Kunde inte ansluta: " + (json.detail || "Okänt fel"));
-        setTables([]);
-        setData([]);
-        setSelectedTable("");
-      }
-    } catch (err) {
-      alert("Fel vid anslutning: " + err.message);
+    const res = await fetch(`${apiBase}/connect`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ server, database, username, password }),
+    });
+    const json = await res.json();
+
+    if (json.status === "connected") {
+      setTables(json.tables);
+      setData([]);
+      setSelectedTable("");
+    } else {
+      alert("Kunde inte ansluta: " + json.detail);
       setTables([]);
       setData([]);
       setSelectedTable("");
     }
   };
 
+  // Hämta data från en tabell
   const loadTable = async (table) => {
     setSelectedTable(table);
-    try {
-      const res = await fetch(`${apiBase}/tables/${table}`);
-      const json = await res.json();
-
-      if (Array.isArray(json)) {
-        setData(json);
-      } else if (json.status === "error") {
-        alert("Fel från backend: " + json.detail);
-        setData([]);
-      } else {
-        setData([]);
-      }
-    } catch (err) {
-      alert("Kunde inte hämta tabellen: " + err.message);
+    const res = await fetch(`${apiBase}/tables/${table}`);
+    const json = await res.json();
+    if (json.status === "error") {
+      alert("Fel: " + json.detail);
       setData([]);
+    } else {
+      setData(json);
     }
   };
 
@@ -95,7 +83,11 @@ function App() {
           <h3>Tabeller</h3>
           <ul>
             {tables.map((t) => (
-              <li key={t} style={{ cursor: "pointer" }} onClick={() => loadTable(t)}>
+              <li
+                key={t}
+                style={{ cursor: "pointer" }}
+                onClick={() => loadTable(t)}
+              >
                 {t}
               </li>
             ))}
@@ -103,21 +95,21 @@ function App() {
         </div>
       )}
 
-      {selectedTable && (
+      {selectedTable && data.length > 0 && (
         <div>
           <h3>Data från {selectedTable}</h3>
           <table border="1" cellPadding="5" style={{ borderCollapse: "collapse" }}>
             <thead>
               <tr>
-                {data[0] && Object.keys(data[0]).map((col) => <th key={col}>{col}</th>)}
+                {Object.keys(data[0]).map((col) => <th key={col}>{col}</th>)}
               </tr>
             </thead>
             <tbody>
-              {Array.isArray(data) ? data.map((row, i) => (
+              {data.map((row, i) => (
                 <tr key={i}>
                   {Object.values(row).map((val, j) => <td key={j}>{val}</td>)}
                 </tr>
-              )) : null}
+              ))}
             </tbody>
           </table>
         </div>
