@@ -9,7 +9,7 @@ function App() {
   const [data, setData] = useState([]);
   const [selectedTable, setSelectedTable] = useState("");
 
-  const apiBase = "http://localhost:8011"; // direktåtkomst till backend
+  const apiBase = "http://backend:8011"; // direktåtkomst till backend
 
   const connect = async () => {
     const res = await fetch(`${apiBase}/connect`, {
