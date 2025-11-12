@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy import create_engine, MetaData, Table, select
@@ -42,10 +42,10 @@ def connect_db(config: MSSQLConfig):
     except Exception as e:
         return {"status": "error", "detail": str(e)}
 
-@app.get("/tables/{table_name}")
+@app.post("/tables/{table_name}")
 def get_table(table_name: str, config: MSSQLConfig):
     """
-    Hämtar data från en specifik tabell med samma dynamiska connection.
+    Hämtar data från en specifik tabell med dynamiska credentials.
     """
     try:
         conn_str = (
