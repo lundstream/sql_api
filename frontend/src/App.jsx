@@ -12,18 +12,25 @@ function App() {
   const apiBase = "http://192.168.1.20:8011"; // direktåtkomst till backend
 
   const connect = async () => {
-    const res = await fetch(`${apiBase}/connect`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ server, database, username, password }),
-    });
-    const json = await res.json();
-    if (json.status === "connected") {
-      setTables(json.tables);
-      setData([]);
-      setSelectedTable("");
-    } else {
-      alert("Kunde inte ansluta: " + json.detail);
+    try {
+      const res = await fetch(`${apiBase}/connect`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ server, database, username, password }),
+      });
+      const json = await res.json();
+      if (json.status === "connected") {
+        setTables(json.tables || []);
+        setData([]);
+        setSelectedTable("");
+      } else {
+        alert("Kunde inte ansluta: " + (json.detail || "Okänt fel"));
+        setTables([]);
+        setData([]);
+        setSelectedTable("");
+      }
+    } catch (err) {
+      alert("Fel vid anslutning: " + err.message);
       setTables([]);
       setData([]);
       setSelectedTable("");
@@ -32,13 +39,22 @@ function App() {
 
   const loadTable = async (table) => {
     setSelectedTable(table);
-    const res = await fetch(`${apiBase}/tables/${table}`, {
-      method: "POST", // ändra till POST om du skickar credentials
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ server, database, username, password }),
-    });
-    const json = await res.json();
-    setData(json);
+    try {
+      const res = await fetch(`${apiBase}/tables/${table}`);
+      const json = await res.json();
+
+      if (Array.isArray(json)) {
+        setData(json);
+      } else if (json.status === "error") {
+        alert("Fel från backend: " + json.detail);
+        setData([]);
+      } else {
+        setData([]);
+      }
+    } catch (err) {
+      alert("Kunde inte hämta tabellen: " + err.message);
+      setData([]);
+    }
   };
 
   return (
@@ -46,10 +62,31 @@ function App() {
       <h2>MSSQL REST API Viewer</h2>
 
       <div style={{ marginBottom: 10 }}>
-        <input placeholder="Server" value={server} onChange={(e) => setServer(e.target.value)} style={{ width: 400 }} /><br/>
-        <input placeholder="Database" value={database} onChange={(e) => setDatabase(e.target.value)} style={{ width: 400, marginTop: 5 }} /><br/>
-        <input placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} style={{ width: 400, marginTop: 5 }} /><br/>
-        <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: 400, marginTop: 5 }} /><br/>
+        <input
+          placeholder="Server"
+          value={server}
+          onChange={(e) => setServer(e.target.value)}
+          style={{ width: 400 }}
+        /><br/>
+        <input
+          placeholder="Database"
+          value={database}
+          onChange={(e) => setDatabase(e.target.value)}
+          style={{ width: 400, marginTop: 5 }}
+        /><br/>
+        <input
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          style={{ width: 400, marginTop: 5 }}
+        /><br/>
+        <input
+          placeholder="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ width: 400, marginTop: 5 }}
+        /><br/>
         <button onClick={connect} style={{ marginTop: 10 }}>Anslut</button>
       </div>
 
@@ -71,12 +108,16 @@ function App() {
           <h3>Data från {selectedTable}</h3>
           <table border="1" cellPadding="5" style={{ borderCollapse: "collapse" }}>
             <thead>
-              <tr>{data[0] && Object.keys(data[0]).map((col) => <th key={col}>{col}</th>)}</tr>
+              <tr>
+                {data[0] && Object.keys(data[0]).map((col) => <th key={col}>{col}</th>)}
+              </tr>
             </thead>
             <tbody>
-              {data.map((row, i) => (
-                <tr key={i}>{Object.values(row).map((val, j) => <td key={j}>{val}</td>)}</tr>
-              ))}
+              {Array.isArray(data) ? data.map((row, i) => (
+                <tr key={i}>
+                  {Object.values(row).map((val, j) => <td key={j}>{val}</td>)}
+                </tr>
+              )) : null}
             </tbody>
           </table>
         </div>
