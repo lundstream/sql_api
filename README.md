@@ -61,7 +61,7 @@ CREATE TABLE Users (
 INSERT INTO Users (Username, Email)
 VALUES ('admin', 'admin@test.com'), ('user1', 'user1@test.com');
 
-2. FastAPI-backend
+## 2. FastAPI-backend
 Syfte
 Tillhandahåller ett REST API som frontend eller externa klienter (t.ex. PowerShell) kan anropa för att:
 Ansluta till valfri MSSQL-databas
@@ -118,7 +118,7 @@ Invoke-RestMethod -Uri "http://192.168.1.20:8011/connect" -Method POST -Body $bo
 
 # Hämta tabell
 Invoke-RestMethod -Uri "http://192.168.1.20:8011/tables/Products" -Method POST -Body $body -ContentType "application/json"
-3. React-frontend (Vite)
+## 3. React-frontend (Vite)
 Syfte
 Ger ett enkelt gränssnitt för att ange anslutningsuppgifter, lista tabeller och visa data.
 
@@ -141,7 +141,7 @@ Klick på tabell
 Gör POST /tables/{tabell}
 Data returneras som JSON och visas i tabellformat
 
-4. Körning
+## 4. Körning
 Backend
 uvicorn main:app --host 0.0.0.0 --port 8011
 
@@ -153,7 +153,7 @@ Backend API: http://192.168.1.20:8011
 
 Frontend (Vite dev): http://192.168.1.20:8012 eller containerport
 
-5. Sammanfattning
+## 5. Sammanfattning
 Del	            Tekniker	                      Syfte
 Databas	        MSSQL (Docker)	                Lagrar tabeller och data
 Backend	        FastAPI, SQLAlchemy, pyodbc	    REST API mot MSSQL
@@ -163,7 +163,7 @@ Kommunikation: JSON via HTTP	API mellan frontend och backend
 
 Systemet är helt dynamiskt: det kräver inga fördefinierade databasanslutningar i koden – användaren matar in uppgifterna i gränssnittet och backend ansluter live.
 
-6. Vidare utveckling
+## 6. Vidare utveckling
 Lägg till CRUD-stöd (INSERT, UPDATE, DELETE)
 Autentisering via JWT-token
 Serverlista / favoriter i frontend
