@@ -8,7 +8,8 @@ function App() {
   const [tables, setTables] = useState([]);
   const [data, setData] = useState([]);
   const [selectedTable, setSelectedTable] = useState("");
-  const apiBase = import.meta.env.VITE_API; // dynamisk via build-arg
+  //const apiBase = import.meta.env.VITE_API; // dynamisk via build-arg
+  const apiBase = "http://backend:8011";  // hårdkodad
 
   const connect = async () => {
     const res = await fetch(`${apiBase}/connect`, {
