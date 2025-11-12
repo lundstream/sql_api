@@ -1,12 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy import create_engine, MetaData, Table, select
 from sqlalchemy.exc import SQLAlchemyError
 
 app = FastAPI()
-engine = None
-metadata = None
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,10 +23,9 @@ class MSSQLConfig(BaseModel):
 @app.post("/connect")
 def connect_db(config: MSSQLConfig):
     """
-    Försök ansluta till SQL Server med givna credentials.
-    Returnerar JSON med status och tabeller, eller felmeddelande.
+    Anslut till SQL Server med dynamiska parametrar.
+    Returnerar tabeller eller error.
     """
-    global engine, metadata
     try:
         conn_str = (
             f"mssql+pyodbc://{config.username}:{config.password}"
@@ -38,24 +35,32 @@ def connect_db(config: MSSQLConfig):
         engine = create_engine(conn_str)
         metadata = MetaData()
         metadata.reflect(bind=engine)
-        return {"status": "connected", "tables": list(metadata.tables.keys())}
+        tables = list(metadata.tables.keys())
+        return {"status": "connected", "tables": tables}
     except SQLAlchemyError as e:
-        # Returnera JSON istället för att krascha
+        return {"status": "error", "detail": str(e)}
+    except Exception as e:
         return {"status": "error", "detail": str(e)}
 
-@app.get("/tables")
-def list_tables():
-    if metadata is None:
-        return {"status": "error", "detail": "Not connected"}
-    return {"tables": list(metadata.tables.keys())}
-
 @app.get("/tables/{table_name}")
-def get_table(table_name: str):
-    if metadata is None:
-        return {"status": "error", "detail": "Not connected"}
-    if table_name not in metadata.tables:
-        return {"status": "error", "detail": "Table not found"}
-    table = metadata.tables[table_name]
-    with engine.connect() as conn:
-        rows = conn.execute(select(table)).all()
-    return [dict(row._mapping) for row in rows]
+def get_table(table_name: str, config: MSSQLConfig):
+    """
+    Hämtar data från en specifik tabell med samma dynamiska connection.
+    """
+    try:
+        conn_str = (
+            f"mssql+pyodbc://{config.username}:{config.password}"
+            f"@{config.server}/{config.database}"
+            "?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes"
+        )
+        engine = create_engine(conn_str)
+        metadata = MetaData()
+        metadata.reflect(bind=engine)
+        if table_name not in metadata.tables:
+            return {"status": "error", "detail": "Table not found"}
+        table = metadata.tables[table_name]
+        with engine.connect() as conn:
+            rows = conn.execute(select(table)).all()
+        return [dict(row._mapping) for row in rows]
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
