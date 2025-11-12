@@ -154,10 +154,11 @@ Backend API: http://192.168.1.20:8011
 Frontend (Vite dev): http://192.168.1.20:8012 eller containerport
 
 ## 5. Sammanfattning
-Del	            Tekniker	                      Syfte
-Databas	        MSSQL (Docker)	                Lagrar tabeller och data
-Backend	        FastAPI, SQLAlchemy, pyodbc	    REST API mot MSSQL
-Frontend	      React, Vite	                    Visar tabeller och data
+|Del	            |Tekniker	                      |Syfte
+|-----------------|-------------------------------|--------------------------
+|Databas	        |MSSQL (Docker)	                |Lagrar tabeller och data
+|Backend	        |FastAPI, SQLAlchemy, pyodbc	  |REST API mot MSSQL
+|Frontend	        |React, Vite	                  |Visar tabeller och data
 
 Kommunikation: JSON via HTTP	API mellan frontend och backend
 
