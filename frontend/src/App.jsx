@@ -11,6 +11,7 @@ function App() {
 
   const apiBase = "http://192.168.1.20:8011"; // backend-adress
 
+  // Anslut och hämta tabeller
   const connect = async () => {
     try {
       const res = await fetch(`${apiBase}/connect`, {
@@ -35,16 +36,21 @@ function App() {
     }
   };
 
+  // Hämta data från specifik tabell
   const loadTable = async (table) => {
     setSelectedTable(table);
     try {
-      const res = await fetch(`${apiBase}/tables/${table}`);
+      const res = await fetch(`${apiBase}/tables/${table}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ server, database, username, password }),
+      });
       const json = await res.json();
       if (json.status === "error") {
         alert("Fel: " + json.detail);
         setData([]);
       } else {
-        setData(json);
+        setData(json); // json är array med rader
       }
     } catch (err) {
       alert("Fel vid hämtning av tabell: " + err);
