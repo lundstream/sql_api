@@ -11,37 +11,44 @@ function App() {
 
   const apiBase = "http://192.168.1.20:8011"; // backend-adress
 
-  // Anslut till SQL Server
   const connect = async () => {
-    const res = await fetch(`${apiBase}/connect`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ server, database, username, password }),
-    });
-    const json = await res.json();
+    try {
+      const res = await fetch(`${apiBase}/connect`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ server, database, username, password }),
+      });
+      const json = await res.json();
 
-    if (json.status === "connected") {
-      setTables(json.tables);
-      setData([]);
-      setSelectedTable("");
-    } else {
-      alert("Kunde inte ansluta: " + json.detail);
-      setTables([]);
-      setData([]);
-      setSelectedTable("");
+      if (json.status === "connected") {
+        setTables(json.tables);
+        setData([]);
+        setSelectedTable("");
+      } else {
+        alert("Kunde inte ansluta: " + json.detail);
+        setTables([]);
+        setData([]);
+        setSelectedTable("");
+      }
+    } catch (err) {
+      alert("Fel vid anslutning: " + err);
     }
   };
 
-  // Hämta data från en tabell
   const loadTable = async (table) => {
     setSelectedTable(table);
-    const res = await fetch(`${apiBase}/tables/${table}`);
-    const json = await res.json();
-    if (json.status === "error") {
-      alert("Fel: " + json.detail);
+    try {
+      const res = await fetch(`${apiBase}/tables/${table}`);
+      const json = await res.json();
+      if (json.status === "error") {
+        alert("Fel: " + json.detail);
+        setData([]);
+      } else {
+        setData(json);
+      }
+    } catch (err) {
+      alert("Fel vid hämtning av tabell: " + err);
       setData([]);
-    } else {
-      setData(json);
     }
   };
 
@@ -101,13 +108,17 @@ function App() {
           <table border="1" cellPadding="5" style={{ borderCollapse: "collapse" }}>
             <thead>
               <tr>
-                {Object.keys(data[0]).map((col) => <th key={col}>{col}</th>)}
+                {Object.keys(data[0]).map((col) => (
+                  <th key={col}>{col}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {data.map((row, i) => (
                 <tr key={i}>
-                  {Object.values(row).map((val, j) => <td key={j}>{val}</td>)}
+                  {Object.values(row).map((val, j) => (
+                    <td key={j}>{val}</td>
+                  ))}
                 </tr>
               ))}
             </tbody>
