@@ -106,7 +106,7 @@ Respons:
 ]
 
 Exempel på PowerShell-anrop
-# Anslut till server
+### Anslut till server
 $body = @{
     server = "192.168.1.20,1433"
     database = "TestDB"
@@ -116,7 +116,7 @@ $body = @{
 
 Invoke-RestMethod -Uri "http://192.168.1.20:8011/connect" -Method POST -Body $body -ContentType "application/json"
 
-# Hämta tabell
+### Hämta tabell
 Invoke-RestMethod -Uri "http://192.168.1.20:8011/tables/Products" -Method POST -Body $body -ContentType "application/json"
 ## 3. React-frontend (Vite)
 Syfte
